@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Twitter Haikus</title>
+		<script type='text/javascript'>
+			window.onload = function() {
+				var recent = document.getElementById('recent'),
+					random = document.getElementById('random'),
+					ws = new WebSocket('ws://'
+						+ window.location.hostname 
+						+ ':'	
+						+ (parseInt(window.location.port, 10) + 1));
+
+				ws.onopen = function(event) {
+					console.log(event);
+				}
+				ws.onmessage = function(event) {
+					var data = JSON.parse(event.data);	
+					recent.innerHTML = data.recent;
+					random.innerHTML = data.random;
+				};
+			};
+		</script>
+	</head>
+	<body>
+		<h1>Recent Haiku</h1>
+		<blockquote id='recent'></blockquote>
+
+		<h1>Random Haiku</h1>
+		<blockquote id='random'></blockquote>
+	</body>
+</html>
