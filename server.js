@@ -20,7 +20,7 @@ var fives = [],
 	clients = [];
 
 
-app.listen(8080);
+app.listen(process.env.PORT || 8080);
 
 //wss.on('connection', function(client) {
 //	client.send(generateHaikus());

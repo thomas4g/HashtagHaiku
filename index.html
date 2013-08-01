@@ -36,11 +36,12 @@
 						var data = JSON.parse(event.target.response);	
 						recent.innerHTML = data.recent;
 						random.innerHTML = data.random;
+						setTimeout(requestUpdate, 10000);
 					};
 
 					req.send();
 				}
-				setInterval(requestUpdate, 5000);
+				requestUpdate();
 			};
 		</script>
 	</head>
