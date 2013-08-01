@@ -1,6 +1,6 @@
 var app = require('http').createServer(handler),
 	WebSocketServer = require('ws').Server,
-	wss = new WebSocketServer({'port':8081}),
+//	wss = new WebSocketServer({'port':8081}),
 	fs = require('fs'),
 	util = require('util'),
 	twitter = require('ntwitter');
@@ -22,17 +22,17 @@ var fives = [],
 
 app.listen(8080);
 
-wss.on('connection', function(client) {
-	client.send(generateHaikus());
-	clients.push(client);
-	client.on('close', function() {
-		clients.splice(clients.indexOf(client), 1);
-	});
-});
+//wss.on('connection', function(client) {
+//	client.send(generateHaikus());
+//	clients.push(client);
+//	client.on('close', function() {
+//		clients.splice(clients.indexOf(client), 1);
+//	});
+//});
 
 getTweets();
 setInterval(getTweets, 60000);
-setInterval(updateHaikus, 10000);
+//setInterval(updateHaikus, 10000);
 
 function generateHaikus() {
 	var first = random(0, fives.length-1, -1),
@@ -71,12 +71,12 @@ function getTweets() {
 	});
 }
 
-function updateHaikus() {
-	var response = generateHaikus();
-	for(var i=0;i<clients.length;i++) {
-		clients[i].send(response);
-	}
-}
+//function updateHaikus() {
+//	var response = generateHaikus();
+//	for(var i=0;i<clients.length;i++) {
+//		clients[i].send(response);
+//	}
+//}
 
 function formHaiku(first, middle, last) {
 	var sep = '<br>';
@@ -95,6 +95,11 @@ function random(min, max, exclude) {
 }
 
 function handler(req, res) {
+	if(req.url.replace('/','') === 'poll') {
+		res.writeHead(200);
+		res.end(generateHaikus());
+		return;
+	}
 	fs.readFile(__dirname +'/index.html',
 		function(err, data) {
 			if(err) {
