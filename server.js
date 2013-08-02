@@ -49,23 +49,23 @@ function generateHaikus() {
 }
 
 function getTweets() {
-	twit.search('#haiku5',{'since_id': latest_five}, function(err, data) {
-		latest_five = data.search_metadata.max_id;
+	console.log("fetching fives");
+	fetchTweets('#haiku5', fives, latest_five);
+	console.log("fetching sevens");
+	fetchTweets('#haiku7', sevens, latest_seven);
+}
+
+function fetchTweets(hashtag, list, latest) {
+	twit.search(hashtag,{'since_id': latest}, function(err, data) {
+		latest = data.search_metadata.max_id;
 		for(var i=data.statuses.length-1;i>=0;i--) {
-			var line = data.statuses[i].text.replace('#haiku5', '').trim();
-			if(fives.indexOf(line) === -1) {
-				latest_five = data.statuses[i].id;
-				fives.push(line);
+			var line = {
+				text: data.statuses[i].text.replace(hashtag, '').trim(),
+				user: data.statuses[i].user.screen_name
 			}
-		}
-	});
-	twit.search('#haiku7',{'since_id':latest_seven}, function(err, data) {
-		latest_seven = data.search_metadata.max_id;
-		for(var i=data.statuses.length-1;i>=0;i--) {
-			var line = data.statuses[i].text.replace('#haiku7', '').trim();
-			if(sevens.indexOf(line) === -1) {
-				latest_seven= data.statuses[i].id;
-				sevens.push(line);
+			if(list.indexOf(line) === -1) {
+				latest = data.statuses[i].id;
+				list.push(line);
 			}
 		}
 	});
@@ -79,10 +79,9 @@ function getTweets() {
 //}
 
 function formHaiku(first, middle, last) {
-	var sep = '<br>';
-	return first + sep + middle + sep + last;
+	var result= [first, middle, last];
+	return result;
 }
-
 
 
 

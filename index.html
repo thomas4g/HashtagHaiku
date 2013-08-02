@@ -2,20 +2,108 @@
 <html>
 	<head>
 		<title>HashtagHaikus</title>
+		<link href='http://fonts.googleapis.com/css?family=Pathway+Gothic+One' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Monda:400,700' rel='stylesheet' type='text/css'>
+
 		<style type='text/css'>
 			html, body {
 				width:100%;
 				height:100%;
 				background:#ccc;
-				font-family: Arial, sans-serif;
-				font-size:1.5em;
+				font-size:1em;
+				margin:0;
+				padding:0;
+				font-family: Monda, sans-serif;
 			}
-			h1 {
-				text-shadow:#999 -5px 0;
+			html * {
+				transition: .2s ease;
+				-webkit-transition: .2s ease;
 			}
-			div {
+
+			header {
+				margin:0;
+				padding:5px 15px;
+				width:100%;
+				background:#eee;
+				box-shadow: 0 -4px 10px #000;
+				box-sizing:border-box;
+			}
+			header > h1 {
+				margin:0;
+				color:#444;
+				font-family:'Pathway Gothic One', sans-serif;
+			}
+			header > h1 > span {
+				color:#111;
+			}
+
+			header > p {
+				font-size:.9em;
+				color:#666;
+				clear:both;
+				display: block;
+			}
+
+			header .meta {
+				float:right;
+				font-size:.8em;
+				width:250px;
+				text-align: right;
+				color:#666;
+			}
+
+			.main {
+				text-align: center;
+			}
+			.haiku h1 {
+				font-family:'Pathway Gothic One', sans-serif;
+				text-shadow:#eee 1px 1px;
+				font-size:2em;
+			}
+			.haiku {
 				display: inline-block;
 				margin:15px;
+				text-align: left;
+			}
+
+			.haiku .line {
+				position: relative;
+				cursor: pointer;
+			}
+			.haiku .line .author {
+				position:absolute;
+				top:-30px;		
+				left:0;		
+				font-size: .7em;
+				opacity: 0;
+				z-index:-1;
+				padding:5px;
+				border-radius:3px;
+				background:#666;
+				color:#fff;
+				text-decoration: none;
+			}
+			.haiku .line:hover .author {
+				opacity: 1;
+				z-index: 5;
+			}
+			.haiku .line .author:hover {
+				font-weight: normal;
+				background:#888;
+			}
+
+			.haiku .line .author:hover:after {
+				border-top-color: #888;
+			}
+			.haiku .line .author:after {
+				content:"";
+				position: absolute;
+				display: block;
+				height:0; width: 0;
+				border:7px solid transparent;
+				border-top-color:#666;
+				bottom:-14px;
+				left:5px;
 			}
 
 		</style>
@@ -27,15 +115,28 @@
 			//			+ window.location.hostname 
 			//			+ ':'	
 			//			+ (parseInt(window.location.port, 10) + 1));
-
+				function fillTemplate(el, data) {
+					el.innerHTML = '';
+					for(var i=0;i<data.length;i++) {
+						var line = document.createElement('div');
+						line.classList.add('line');
+						line.textContent = data[i].text;//.line;
+						var author = document.createElement('a');
+						author.textContent = data[i].user;
+						author.classList.add('author')
+						author.href = 'http://twitter.com/' + data[i].user;
+						line.appendChild(author);
+						el.appendChild(line);
+					}
+				}
 				function requestUpdate() {
 					var	req = new XMLHttpRequest();
 					req.open('get', 'poll', true);
 					req.onload = function(event) {	
 						try {
 							var data = JSON.parse(event.target.response);	
-							recent.innerHTML = data.recent;
-							random.innerHTML = data.random;
+							fillTemplate(recent, data.recent);
+							fillTemplate(random, data.random);
 						}
 						catch(e) {
 							console.log(e);
@@ -50,13 +151,25 @@
 		</script>
 	</head>
 	<body>
-		<div>
-			<h1>Recent Haiku</h1>
-			<blockquote id='recent'></blockquote>
-		</div>
-		<div>
-			<h1>Random Haiku</h1>
-			<blockquote id='random'></blockquote>
-		</div>
+		<header>
+			<section class='meta'>
+				Crafted by <a href='http://github.com/thomas4g'>Thomas Shields</a> at the suggestion of <a href='http://twitter.com/AubergineDill'>@AubergineDill</a> | <a href='http://github.com/thomas4g/HashtagHaiku'>Code</a>
+			</section>
+			<h1>#hashtag<span>haikus</span></h1>
+			<p>
+				#hashtaghaikus scrapes twitter for tweets containing the #haiku5 and #haiku7 hashtags and forms random haikus
+			</p>
+
+		</header>
+		<section class='main'>
+			<div class='haiku'>
+				<h1>Recent Haiku</h1>
+				<blockquote id='recent'></blockquote>
+			</div>
+			<div class='haiku'>
+				<h1>Random Haiku</h1>
+				<blockquote id='random'></blockquote>
+			</div>
+		</section>
 	</body>
 </html>
